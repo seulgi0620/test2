@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mybatis.mapper.boardMapper">
+	<!-- <resultMap id="boardMap" type="User">
+		<id property="id" column="user_id" />
+		<result property="username" column="username" />
+		<result property="password" column="password" />
+	</resultMap> -->
+	<select id="boardList" parameterType="com.vo.BoardMasterVO"
+		resultType="map">
+		select bm_title, bm_writer, bm_content, bm_hit from
+		board_master_t
+	</select>
+
+	<select id="jsonBoardList" parameterType="bmVO"
+		resultType="bmVO">
+		select bm.bm_no, bm_title, bm_writer, bm_content, bm_date, bm_hit,
+		bs_fname
+		from board_master_t bm, BOARD_SUB_T bs
+		where bm.bm_no = bs.bm_no(+)
+         <if test="bm_no>0">
+            and bm.bm_no = #{bm_no}
+         </if>
+         <if test='cb_search!=null and cb_search.equals("bm_content")'>
+            and bm.bm_content like '%'||#{tb_search}||'%'
+         </if>
+         <if test='cb_search!=null and cb_search.equals("bm_title")'>
+            and bm.bm_title like '%'||#{tb_search}||'%'
+         </if>
+         <if test='cb_search!=null and cb_search.equals("bm_writer")'>
+            and bm.bm_writer like '%'||#{tb_search}||'%'
+         </if>
+         <if test='bm_date!=null and bm_date.length>0'>
+            and bm.bm_date = #{bm_date}
+         </if>
+		order by bm.bm_no
+	</select>
+</mapper>
